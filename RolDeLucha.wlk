@@ -1,6 +1,6 @@
-class Rolando{
+class Jugador{
     var property hechizoPreferido
-    const property valorBase = valorBase.valorBase()
+    const property valorBase1 = valorBase.valorBase()
     var property skillLuchaBase = 1
     var property artefactos 
     var property monedasDeOro = 100
@@ -17,15 +17,17 @@ class Rolando{
     method quitarArtefacto(artefacto) = artefactos.remove(artefacto)
     method habilidadLucha() = skillLuchaBase + artefactos.sum{artefacto => artefacto.aporte(self)}
     method seCreePoderoso() = hechizoPreferido.esPoderoso()
-    method nivelHechizeria() = valorBase * hechizoPreferido.poder()+ fuerzaOscura.valor()
+    method nivelHechizeria() = valorBase1 * hechizoPreferido.poder()+ fuerzaOscura.valor()
     method enQueEsMejor(){
         if(self.nivelHechizeria() > self.habilidadLucha()){
             return "es mas fuerte en hechizeria"
         }else{return "es mas fuerte en lucha"}
     }
     method estaCargado() = artefactos.size() > 5
-    method gastarMonedasOro(num) = monedasDeOro - num
-    method puedePagar(num) = monedasDeOro > num
+    method gastarMonedasOro(num){monedasDeOro = monedasDeOro - num}
+    method puedePagar(num) = monedasDeOro >= num
+    method cumplirObjetivo() {self.monedasDeOro(monedasDeOro+10)}
+    method nuevoHechizoFavorito(hechizo){hechizoPreferido = hechizo}
 }
 
 object valorBase{
@@ -141,10 +143,9 @@ class LibroHechizeria inherits Artefacto{
 // FERIA DE HECHIZERIA
 object feria{
     method comprarHechizo(soldado,nuevoHechizo){
-        const medioPago = soldado.hechizoPreferido().precioLista()/2
-        const gastoFinal = aux.max(0,nuevoHechizo.precioLista()-medioPago)
+        const medioPago = soldado.hechizoPreferido().precioLista(soldado)/2
+        const gastoFinal = aux.max(0,nuevoHechizo.precioLista(soldado)-medioPago)
         if(soldado.puedePagar(gastoFinal)){
-        
         soldado.nuevoHechizoFavorito(nuevoHechizo)
         soldado.gastarMonedasOro(gastoFinal)}
     }
@@ -161,3 +162,14 @@ object aux{
     method min(a,b){if(a>b)return b else return a}
     method max(a,b){if(a>b)return a else return b}
 }
+
+// TESTS
+
+const xenia = new Jugador(hechizoPreferido = logo,artefactos= [])
+const thor = new Jugador(hechizoPreferido = basico,artefactos=[])
+const loki = new Jugador(hechizoPreferido=basico,artefactos=[],monedasDeOro=5)
+const rolando = new Jugador(hechizoPreferido=malefico,artefactos=[])
+
+const logo = new Logos(nombre = "alacachula cachicomula",valor = 1)
+const basico = new Hechizo(nombre = "hechizo basico")
+const malefico = new Hechizo(nombre = "espectro malefico")
